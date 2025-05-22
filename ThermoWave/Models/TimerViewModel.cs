@@ -1,6 +1,6 @@
 ﻿namespace ThermoWave.Web.Models
 {
-	public class TimerModel
+	public class TimerViewModel
 	{
 
 	}
