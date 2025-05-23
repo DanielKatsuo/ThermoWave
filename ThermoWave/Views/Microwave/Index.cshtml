@@ -1,1 +1,103 @@
-﻿
+﻿@page
+@model dynamic
+
+<style>
+    .btn-mw {
+        background: #444;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 1.3em;
+        padding: 16px 0;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+        .btn-mw:hover {
+            background: #666;
+        }
+
+    .btn-func {
+        background: #0a7;
+        font-weight: bold;
+    }
+
+        .btn-func:hover {
+            background: #0c9;
+        }
+</style>
+
+<div style="max-width: 350px; margin: 40px auto; background: #222; border-radius: 16px; box-shadow: 0 4px 16px #0004; padding: 32px; color: #fff; font-family: Arial, sans-serif;">
+    <h2 style="text-align:center; margin-bottom: 24px;">Micro-ondas</h2>
+    <div style="background: #111; border-radius: 8px; padding: 16px; margin-bottom: 24px; text-align: center;">
+        <span style="font-size: 2.5em; letter-spacing: 0.1em;" id="display">00:00</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">
+        @for (int i = 1; i <= 9; i++)
+        {
+            <button type="button" class="btn-mw" onclick="addNumber('@i')">@i</button>
+        }
+        <span></span>
+        <button type="button" class="btn-mw" onclick="addNumber('0')">0</button>
+        <span></span>
+    </div>
+    <div style="display: flex; gap: 12px; justify-content: space-between;">
+        <button type="button" class="btn-mw btn-func" onclick="startMicrowave()">Iniciar</button>
+        <button type="button" class="btn-mw btn-func" onclick="stopMicrowave()">Parar</button>
+        <button type="button" class="btn-mw btn-func" onclick="clearDisplay()">Limpar</button>
+    </div>
+</div>
+
+<script>
+    let input = "";
+    let timer = null;
+    let seconds = 0;
+
+    function addNumber(num) {
+        if (input.length >= 4) return;
+        input += num;
+        updateDisplay(formatInput(input));
+    }
+
+    function formatInput(str) {
+        str = str.padStart(4, '0');
+        return str.slice(0, 2) + ":" + str.slice(2);
+    }
+
+    function updateDisplay(val) {
+        document.getElementById('display').textContent = val;
+    }
+
+    function clearDisplay() {
+        input = "";
+        updateDisplay("00:00");
+        stopMicrowave();
+    }
+
+    function startMicrowave() {
+        if (timer) return;
+        let min = parseInt(input.padStart(4, '0').slice(0, 2));
+        let sec = parseInt(input.padStart(4, '0').slice(2));
+        seconds = min * 60 + sec;
+        if (seconds <= 0) return;
+        timer = setInterval(() => {
+            if (seconds <= 0) {
+                stopMicrowave();
+                updateDisplay("00:00");
+                alert("Pronto!");
+                return;
+            }
+            seconds--;
+            let m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            let s = (seconds % 60).toString().padStart(2, '0');
+            updateDisplay(`${m}:${s}`);
+        }, 1000);
+    }
+
+    function stopMicrowave() {
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+    }
+</script>

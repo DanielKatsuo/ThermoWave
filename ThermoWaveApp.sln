@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThermoWave.Web", "ThermoWav
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThermoWave.Domain", "ThermoWave.Domain\ThermoWave.Domain.csproj", "{F1075FC1-C1EA-4EB0-8443-F98AB33AC638}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Web", "1 - Web", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Domain", "2 - Domain", "{F5DCA16B-5122-4DE9-B834-C70B1BEA26B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +28,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{38F0FDBA-0E19-4633-A6DC-F55D310CFBAE} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{F1075FC1-C1EA-4EB0-8443-F98AB33AC638} = {F5DCA16B-5122-4DE9-B834-C70B1BEA26B2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E2D18513-E9DD-463F-B710-43DB76EF9A88}
