@@ -76,6 +76,19 @@ namespace ThermoWave.Domain.Entities
 			}
 		}
 
+		public void DecrementarTempo()
+		{
+			if (Status != HeatingStatus.Heating) return;
+
+			RemainingTimeInSeconds--;
+			if (RemainingTimeInSeconds <= 0)
+			{
+				RemainingTimeInSeconds = 0;
+				Status = HeatingStatus.Finished;
+				InformativeString += "Aquecimento concluído";
+			}
+		}
+
 		public void FormatarTempoRestante()
 		{
 			int minutos = RemainingTimeInSeconds / 60;
