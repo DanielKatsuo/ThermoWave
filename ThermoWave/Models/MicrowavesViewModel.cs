@@ -8,14 +8,6 @@
 		public string PowerShow { get; set; } = "10";
 	    public string ErrorMessage { get; set; } = string.Empty;
 		public string StringProcess { get; set; } = string.Empty;
-		public Status StatusNow { get; set; }
-	}
-
-	public enum Status
-	{
-		Idle,
-		Heating,
-		Finished,
-		Error
+		public string StatusNow { get; set; } = string.Empty;
 	}
 }
