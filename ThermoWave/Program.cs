@@ -1,5 +1,5 @@
 using ThermoWave.Domain.Interfaces;
-using ThermoWave.Domain.Services;
+using ThermoWave.Services.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +22,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=MicroWave}/{action=Index}");
+    pattern: "{controller=Microwaves}/{action=Index}");
 
 app.Run();

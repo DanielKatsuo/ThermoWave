@@ -10,5 +10,6 @@ namespace ThermoWave.Domain.Interfaces
 	public interface IMicrowavesService 
 	{
 		void IniciarAquecimento(int tempoSegundos, int potencia);
+		void InicioRapido();
 	}
 }

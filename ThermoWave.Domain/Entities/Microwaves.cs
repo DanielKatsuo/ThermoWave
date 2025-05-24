@@ -9,8 +9,12 @@ namespace ThermoWave.Domain.Entities
 {
 	public class Microwaves
 	{
+		public Microwaves()
+		{
+			Resetar();
+		}
+
 		public int RemainingTimeInSeconds { get; set; }
-		public TimeOnly StartTime { get; set; } = TimeOnly.FromDateTime(DateTime.MinValue);
 		public int Power { get; set; } = 10;
 		public HeatingStatus Status { get; set; }
 		public string? InformativeString { get; set; }
@@ -29,7 +33,53 @@ namespace ThermoWave.Domain.Entities
 			InformativeString = "";
 			HeatingCharacter = '.';
 		}
+
+		public void Pausar()
+		{
+			if (Status == HeatingStatus.Heating)
+			{
+				Status = HeatingStatus.Idle;
+			}
+		}
+
+		public void Continuar()
+		{
+			if (Status == HeatingStatus.Idle)
+			{
+				Status = HeatingStatus.Heating;
+			}
+		}
+
+		public void Cancelar()
+		{
+			Resetar();
+		}
+
+		private void Resetar()
+		{
+			RemainingTimeInSeconds = 0;
+			Power = 10; // Padrão
+			Status = HeatingStatus.Finished;
+			InformativeString = "";
+			HeatingCharacter = '.';
+		}
+
+		public void AtualizarStringDeProgresso()
+		{
+			if (Status == HeatingStatus.Heating)
+			{
+				for (int i = 0; i < Power; i++)
+				{
+					InformativeString += HeatingCharacter;
+				}
+			}
+		}
+
+		public void FormatarTempoRestante()
+		{
+			int minutos = RemainingTimeInSeconds / 60;
+			int segundos = RemainingTimeInSeconds % 60;
+			InformativeString = $"{minutos:D2}:{segundos:D2}";
+		}
 	}
-
-
 }

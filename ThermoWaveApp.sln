@@ -9,7 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThermoWave.Domain", "Thermo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Web", "1 - Web", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Domain", "2 - Domain", "{F5DCA16B-5122-4DE9-B834-C70B1BEA26B2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Domain", "3 - Domain", "{F5DCA16B-5122-4DE9-B834-C70B1BEA26B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThermoWave.Services", "ThermoWave.Services\ThermoWave.Services.csproj", "{847D1F22-AA5E-45C3-B772-9513601F1AC9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2- Services", "2- Services", "{28F1E68D-9BE5-403E-8BCA-3F0BE1C04F4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +29,10 @@ Global
 		{F1075FC1-C1EA-4EB0-8443-F98AB33AC638}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1075FC1-C1EA-4EB0-8443-F98AB33AC638}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1075FC1-C1EA-4EB0-8443-F98AB33AC638}.Release|Any CPU.Build.0 = Release|Any CPU
+		{847D1F22-AA5E-45C3-B772-9513601F1AC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{847D1F22-AA5E-45C3-B772-9513601F1AC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{847D1F22-AA5E-45C3-B772-9513601F1AC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{847D1F22-AA5E-45C3-B772-9513601F1AC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +40,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{38F0FDBA-0E19-4633-A6DC-F55D310CFBAE} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{F1075FC1-C1EA-4EB0-8443-F98AB33AC638} = {F5DCA16B-5122-4DE9-B834-C70B1BEA26B2}
+		{847D1F22-AA5E-45C3-B772-9513601F1AC9} = {28F1E68D-9BE5-403E-8BCA-3F0BE1C04F4E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E2D18513-E9DD-463F-B710-43DB76EF9A88}
