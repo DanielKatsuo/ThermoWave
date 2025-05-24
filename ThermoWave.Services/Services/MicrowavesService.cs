@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using ThermoWave.Domain.Entities;
 using ThermoWave.Domain.Interfaces;
 
-namespace ThermoWave.Domain.Services
+namespace ThermoWave.Services.Services
 {
 	public class MicrowavesService : IMicrowavesService
 	{
@@ -20,6 +20,11 @@ namespace ThermoWave.Domain.Services
 		public void IniciarAquecimento(int tempoSegundos, int potencia)
 		{ 
 			 _microwaves.IniciarAquecimento(tempoSegundos, potencia);
+		}
+
+		public void InicioRapido()
+		{
+			_microwaves.IniciarAquecimento(30, 10);
 		}
 	}
 }

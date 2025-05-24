@@ -1,5 +1,5 @@
 using ThermoWave.Domain.Interfaces;
-using ThermoWave.Domain.Services;
+using ThermoWave.Services.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

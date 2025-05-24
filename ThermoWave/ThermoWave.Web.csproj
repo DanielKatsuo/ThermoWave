@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ThermoWave.Domain\ThermoWave.Domain.csproj" />
+    <ProjectReference Include="..\ThermoWave.Services\ThermoWave.Services.csproj" />
   </ItemGroup>
 
 </Project>
