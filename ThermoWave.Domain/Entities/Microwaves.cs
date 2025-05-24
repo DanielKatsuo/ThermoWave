@@ -18,6 +18,7 @@ namespace ThermoWave.Domain.Entities
 		public int Power { get; set; } = 10;
 		public HeatingStatus Status { get; set; }
 		public string? InformativeString { get; set; }
+		public string RemaingTimeFormatted { get; set; } = "00:00";
 		public char HeatingCharacter { get; set; } = '.';
 
 		public void IniciarAquecimento(int tempoSegundos, int potencia)
