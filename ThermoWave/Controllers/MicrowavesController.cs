@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ThermoWave.Web.Controllers
 {
-	public class Microwave : Controller
+	public class Microwaves : Controller
 	{
 		public ActionResult Index()
 		{

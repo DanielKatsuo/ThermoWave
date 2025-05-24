@@ -22,6 +22,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=MicroWave}/{action=Index}");
+    pattern: "{controller=Microwaves}/{action=Index}");
 
 app.Run();
