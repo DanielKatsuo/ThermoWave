@@ -32,7 +32,7 @@ namespace ThermoWave.Services.Services
 		{
 			if (_microwaves.Status == HeatingStatus.Heating)
 			{
-				_microwaves.RemainingTimeInSeconds += 30; // Atualiza diretamente a propriedade
+				_microwaves.AcrescentarTempo(); // Atualiza diretamente a propriedade
 			}
 		}
 

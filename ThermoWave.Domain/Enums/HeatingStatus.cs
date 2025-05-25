@@ -9,6 +9,7 @@ namespace ThermoWave.Domain.Enums
 	public enum HeatingStatus
 	{
 		Idle,
+
 		Heating,
 		Finished,
 		Error

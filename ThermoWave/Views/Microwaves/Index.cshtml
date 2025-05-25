@@ -1,103 +1,219 @@
-﻿@page
-@model dynamic
+﻿@model ThermoWave.Web.Models.MicrowavesViewModel;
 
-<style>
-    .btn-mw {
-        background: #444;
-        color: #fff;
-        border: none;
-        border-radius: 6px;
-        font-size: 1.3em;
-        padding: 16px 0;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
+@{
+    ViewData["Title"] = "Micro-ondas Digital";
+}
 
-        .btn-mw:hover {
-            background: #666;
-        }
+<div class="container text-center">
+    <h1 class="display-4">Micro-ondas Digital</h1>
 
-    .btn-func {
-        background: #0a7;
-        font-weight: bold;
-    }
-
-        .btn-func:hover {
-            background: #0c9;
-        }
-</style>
-
-<div style="max-width: 350px; margin: 40px auto; background: #222; border-radius: 16px; box-shadow: 0 4px 16px #0004; padding: 32px; color: #fff; font-family: Arial, sans-serif;">
-    <h2 style="text-align:center; margin-bottom: 24px;">Micro-ondas</h2>
-    <div style="background: #111; border-radius: 8px; padding: 16px; margin-bottom: 24px; text-align: center;">
-        <span style="font-size: 2.5em; letter-spacing: 0.1em;" id="display">00:00</span>
+    <div class="microwave-display p-3 mb-4 border rounded">
+        <p class="h2" id="display-tempo">@Model.TimeShow</p>
+        <p class="h5">Potência: <span id="display-potencia">@Model.PowerShow</span></p>
+        <p class="h5">Status: <span id="display-status">@Model.StatusNow</span></p>
+        <p class="h6" id="display-progresso">@Model.StringProcess</p>
+        <p class="text-danger" id="display-mensagem-erro"></p>
     </div>
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">
-        @for (int i = 1; i <= 9; i++)
-        {
-            <button type="button" class="btn-mw" onclick="addNumber('@i')">@i</button>
-        }
-        <span></span>
-        <button type="button" class="btn-mw" onclick="addNumber('0')">0</button>
-        <span></span>
+
+    <div class="row mb-3">
+        <div class="col-md-6 offset-md-3">
+            <div class="form-group mb-2">
+                <label for="inputTempo">Tempo (segundos):</label>
+                <input type="text" id="inputTempo" class="form-control text-center" placeholder="Ex: 120" value="@Model.TimeInput">
+            </div>
+            <div class="form-group">
+                <label for="inputPotencia">Potência (1-10):</label>
+                <input type="text" id="inputPotencia" class="form-control text-center" placeholder="Padrão: 10" value="@Model.PowerInput">
+            </div>
+        </div>
     </div>
-    <div style="display: flex; gap: 12px; justify-content: space-between;">
-        <button type="button" class="btn-mw btn-func" onclick="startMicrowave()">Iniciar</button>
-        <button type="button" class="btn-mw btn-func" onclick="stopMicrowave()">Parar</button>
-        <button type="button" class="btn-mw btn-func" onclick="clearDisplay()">Limpar</button>
+
+    <div class="keypad mb-4">
+        <div class="row justify-content-center">
+            <div class="col-2"><button class="btn btn-outline-primary btn-lg btn-numero" data-numero="1">1</button></div>
+            <div class="col-2"><button class="btn btn-outline-primary btn-lg btn-numero" data-numero="2">2</button></div>
+            <div class="col-2"><button class="btn btn-outline-primary btn-lg btn-numero" data-numero="3">3</button></div>
+        </div>
+        <div class="row justify-content-center mt-2">
+            <div class="col-2"><button class="btn btn-outline-primary btn-lg btn-numero" data-numero="4">4</button></div>
+            <div class="col-2"><button class="btn btn-outline-primary btn-lg btn-numero" data-numero="5">5</button></div>
+            <div class="col-2"><button class="btn btn-outline-primary btn-lg btn-numero" data-numero="6">6</button></div>
+        </div>
+        <div class="row justify-content-center mt-2">
+            <div class="col-2"><button class="btn btn-outline-primary btn-lg btn-numero" data-numero="7">7</button></div>
+            <div class="col-2"><button class="btn btn-outline-primary btn-lg btn-numero" data-numero="8">8</button></div>
+            <div class="col-2"><button class="btn btn-outline-primary btn-lg btn-numero" data-numero="9">9</button></div>
+        </div>
+        <div class="row justify-content-center mt-2">
+            <div class="col-2"><button class="btn btn-outline-primary btn-lg btn-numero" data-numero="0">0</button></div>
+            <div class="col-2"><button class="btn btn-warning btn-lg" id="btn-limpar">Limpar</button></div>
+            <div class="col-2"><button class="btn btn-success btn-lg" id="btn-iniciar">Iniciar</button></div>
+        </div>
+    </div>
+
+    <div class="control-buttons mt-4">
+        <button class="btn btn-info btn-lg me-2" id="btn-inicio-rapido">Início Rápido (30s)</button>
+        <button class="btn btn-secondary btn-lg me-2" id="btn-acrescentar-tempo">+30s</button>
+        <button class="btn btn-danger btn-lg" id="btn-pausar-cancelar">Pausar / Cancelar</button>
     </div>
 </div>
 
+<script src="~/lib/jquery/dist/jquery.js"></script>
 <script>
-    let input = "";
-    let timer = null;
-    let seconds = 0;
+    // Variável para armazenar o ID do intervalo, para poder pará-lo
+    let updateIntervalId;
 
-    function addNumber(num) {
-        if (input.length >= 4) return;
-        input += num;
-        updateDisplay(formatInput(input));
+    // Função para iniciar a atualização periódica do status
+    function startStatusUpdate() {
+        // Limpa qualquer intervalo anterior para evitar múltiplos timers
+        if (updateIntervalId) {
+            clearInterval(updateIntervalId);
+        }
+        // Chama a função updateMicrowaveStatus a cada 500ms (pode ajustar para 200ms como no PDF)
+        // Usar 500ms é um bom equilíbrio para não sobrecarregar o servidor e ter uma UI responsiva.
+        // O PDF sugere 200ms ou 500ms. Vamos com 500ms para começar, mas 200ms dará uma sensação mais "real-time".
+        updateIntervalId = setInterval(updateMicrowaveStatus, 500);
     }
 
-    function formatInput(str) {
-        str = str.padStart(4, '0');
-        return str.slice(0, 2) + ":" + str.slice(2);
-    }
-
-    function updateDisplay(val) {
-        document.getElementById('display').textContent = val;
-    }
-
-    function clearDisplay() {
-        input = "";
-        updateDisplay("00:00");
-        stopMicrowave();
-    }
-
-    function startMicrowave() {
-        if (timer) return;
-        let min = parseInt(input.padStart(4, '0').slice(0, 2));
-        let sec = parseInt(input.padStart(4, '0').slice(2));
-        seconds = min * 60 + sec;
-        if (seconds <= 0) return;
-        timer = setInterval(() => {
-            if (seconds <= 0) {
-                stopMicrowave();
-                updateDisplay("00:00");
-                alert("Pronto!");
-                return;
-            }
-            seconds--;
-            let m = Math.floor(seconds / 60).toString().padStart(2, '0');
-            let s = (seconds % 60).toString().padStart(2, '0');
-            updateDisplay(`${m}:${s}`);
-        }, 1000);
-    }
-
-    function stopMicrowave() {
-        if (timer) {
-            clearInterval(timer);
-            timer = null;
+    // Função para parar a atualização periódica do status
+    function stopStatusUpdate() {
+        if (updateIntervalId) {
+            clearInterval(updateIntervalId);
+            updateIntervalId = null;
         }
     }
+
+    // Função para fazer a chamada AJAX e atualizar a UI
+    function updateMicrowaveStatus() {
+        $.ajax({
+            url: '/Microwave/AtualizarStatus', // Caminho para a Action do seu Controller
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                if (data.success) {
+                    $('#display-tempo').text(data.tempo);
+                    $('#display-potencia').text(data.potencia);
+                    $('#display-status').text(data.status);
+                    $('#display-progresso').text(data.progresso);
+                    $('#display-mensagem-erro').text(data.mensagemErro); // Se houver mensagem de erro
+
+                    // Lógica para parar o timer JS se o aquecimento for concluído ou parado
+                    if (data.status === "Concluido" || data.status === "Parado") {
+                        stopStatusUpdate();
+                    }
+
+                    // Opcional: estilizar a interface com base no status
+                    // if (data.status === "Aquecendo") {
+                    //     $('#display-progresso').addClass('text-info');
+                    // } else {
+                    //     $('#display-progresso').removeClass('text-info');
+                    // }
+
+                } else {
+                    // Exibir mensagem de erro da chamada AJAX, se houver
+                    console.error("Erro ao atualizar status:", data.message);
+                    $('#display-mensagem-erro').text(data.message || "Erro desconhecido ao atualizar status.");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Erro na chamada AJAX para AtualizarStatus:", status, error);
+                $('#display-mensagem-erro').text("Erro de comunicação: " + error);
+                // Em caso de erro de comunicação, pode-se parar o timer também
+                stopStatusUpdate();
+            }
+        });
+    }
+
+    // Chamadas AJAX para os botões de ação (Iniciar, Rápido, Pausar/Cancelar, Acrescentar)
+    // Exemplo para o botão "Iniciar"
+    function sendAction(actionUrl, formData) {
+        $.ajax({
+            url: actionUrl,
+            type: 'POST', // Use POST para ações que alteram o estado
+            data: formData,
+            dataType: 'json',
+            success: function (data) {
+                if (data.success) {
+                    // Atualiza a UI imediatamente com os dados retornados
+                    $('#display-tempo').text(data.tempo);
+                    $('#display-potencia').text(data.potencia);
+                    $('#display-status').text(data.status);
+                    $('#display-progresso').text(data.progresso);
+                    $('#display-mensagem-erro').text(''); // Limpa mensagens de erro
+
+                    // Se iniciou aquecimento, garante que o timer de atualização esteja ativo
+                    if (data.status === "Aquecendo") {
+                        startStatusUpdate();
+                    } else if (data.status === "Pausado" || data.status === "Parado" || data.status === "Concluido") {
+                        stopStatusUpdate(); // Para o timer se pausou ou cancelou/concluiu
+                    }
+
+                } else {
+                    $('#display-mensagem-erro').text(data.message || "Erro na operação.");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Erro na ação:", status, error);
+                $('#display-mensagem-erro').text("Erro de comunicação ao executar ação: " + error);
+            }
+        });
+    }
+
+
+    // Exemplo de como você chamaria as ações
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicia a atualização do status assim que a página é carregada
+        // Isso é útil para mostrar o estado inicial do micro-ondas
+        startStatusUpdate();
+
+        // Lógica do teclado digital para preencher os inputs (exemplo)
+        $('.btn-numero').on('click', function () {
+            const numero = $(this).data('numero');
+            const inputTempo = $('#inputTempo'); // Supondo um input com id="inputTempo"
+            const inputPotencia = $('#inputPotencia'); // Supondo um input com id="inputPotencia"
+
+            // Lógica para preencher o input de tempo ou potência
+            // Você precisará de uma lógica mais sofisticada aqui para alternar entre eles
+            // e formatar MM:SS no input. Para o Nível 1, talvez apenas um input de segundos.
+            if (inputTempo.is(':focus')) {
+                inputTempo.val(inputTempo.val() + numero);
+            } else if (inputPotencia.is(':focus')) {
+                inputPotencia.val(inputPotencia.val() + numero);
+            } else {
+                 // Caso nenhum input esteja focado, preenche o tempo por padrão
+                inputTempo.val(inputTempo.val() + numero);
+            }
+        });
+
+        // Botões de ação
+        $('#btn-iniciar').on('click', function () {
+            const tempo = parseInt($('#inputTempo').val());
+            const potencia = $('#inputPotencia').val();
+
+            sendAction('/Microwave/IniciarAquecimento', { tempoSegundos: tempo, potencia: potencia });
+        });
+
+        $('#btn-inicio-rapido').on('click', function () {
+            sendAction('/Microwave/InicioRapido');
+        });
+
+        $('#btn-acrescentar-tempo').on('click', function () {
+            sendAction('/Microwave/AcrescentarTempo');
+        });
+
+        $('#btn-pausar-cancelar').on('click', function () {
+            sendAction('/Microwave/PausarOuCancelar');
+        });
+
+        // Limpar campos
+        $('#btn-limpar').on('click', function() {
+            $('#inputTempo').val('');
+            $('#inputPotencia').val('');
+            $('#display-mensagem-erro').text('');
+        });
+
+        // Você também pode querer iniciar a atualização de status ao carregar a página
+        // para mostrar o estado inicial do micro-ondas.
+        // updateMicrowaveStatus(); // Chamada inicial
+    });
 </script>

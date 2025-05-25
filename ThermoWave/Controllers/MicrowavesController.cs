@@ -41,13 +41,36 @@ namespace ThermoWave.Web.Controllers
 			});
 		}
 
+		[HttpGet]
+		public JsonResult AtualizarStatus()
+		{
+			try
+			{
+				_microwaves.ProcessarTick();
+
+				return Json(new
+				{
+					success = true,
+					tempo = _microwaves.GetRemaingTimeFormatted(),
+					potencia = _microwaves.GetPotenciaExibicao(),
+					status = _microwaves.GetStatus().ToString(),
+					progresso = _microwaves.GetStringInformativa()
+				});
+			}
+			catch (Exception ex)
+			{
+				return Json(new { success = false, message = $"Falha ao atualizar status. ex: {ex.Message}" });
+			}
+		}
+
 		[HttpPost]
-		public JsonResult IniciarAquecimento(int tempoSegundos, int? potencia)
+		public JsonResult IniciarAquecimento(string tempoSegundos, int? potencia)
 		{
 			try
 			{
 				var potenciaValid = potencia ?? 10;
-				_microwaves.IniciarAquecimento(tempoSegundos, potenciaValid);
+				var tempo = Helpers.ConverterMinutosESegundosParaSegundos(tempoSegundos);
+				_microwaves.IniciarAquecimento(tempo, potenciaValid);
 				return Json(new
 				{
 					success = true,
@@ -134,5 +157,37 @@ namespace ThermoWave.Web.Controllers
 				return Json(new { success = false, message = $"Ocorreu um erro ao pausar/cancelar. Erro: {ex.Message}" });
 			}
 		}
+	}
+}
+
+public static class Helpers
+{
+	public static int ConverterMinutosESegundosParaSegundos(string formattedTime)
+	{
+		// Verifica se a string está no formato esperado "MM:SS"
+		if (string.IsNullOrEmpty(formattedTime) || !formattedTime.Contains(":"))
+		{
+			throw new ArgumentException("Formato de tempo inválido. Esperado 'MM:SS'.", nameof(formattedTime));
+		}
+
+		string[] parts = formattedTime.Split(':');
+
+		if (parts.Length != 2)
+		{
+			throw new ArgumentException("Formato de tempo inválido. Esperado 'MM:SS'.", nameof(formattedTime));
+		}
+
+		if (!int.TryParse(parts[0], out int minutes))
+		{
+			throw new ArgumentException("Minutos inválidos na string de tempo.", nameof(formattedTime));
+		}
+
+		if (!int.TryParse(parts[1], out int seconds))
+		{
+			throw new ArgumentException("Segundos inválidos na string de tempo.", nameof(formattedTime));
+		}
+
+		// Calcula o total de segundos
+		return (minutes * 60) + seconds;
 	}
 }
